@@ -1,39 +1,47 @@
+/* this page handles the incoming requests and returns responses to the client
+*/
+
 import { Controller , Body, Get, Delete,Param, Post, Query, Patch} from '@nestjs/common';
-import { create } from 'domain';
 import { CreateUserDto } from './dto/create-user.dto';
-import { UpdateUserDto } from './dto/update-user.dto';
-import { UsersService } from './users.service';
+import { UsersService} from './users.service';
 
 
 @Controller('users')
 export class UsersController {
     constructor(private readonly usersService: UsersService)  {}
 
+
+    //Get with no parameters searches for all of the users in the array and returns them.
     @Get()
-    findAll(@Query() Pagination) {
-        return this.usersService.findAll();
+    findAll(@Query() any ) {
+        const users = this.usersService.findAll();
+        return users;//this.usersService.findAll();
     }
 
+    //Get with the "id" parameter finds the account matching that id and returns it.
     @Get(':id')
-    findOne(@Param('id') id: string){
-        return this.usersService.findOne('' + id);
+    findOne(@Param('id') id: number){
+        if (this.usersService.isUsed('id')){
+            return this.usersService.findOne('' + id);
+        }
     }
 
-
+    //Post creates a new user based on the clients inputs. If the email already exists,
+    //it will return an error. If not, it will create the account.  
     @Post()
-    create(@Body() createUserDto: CreateUserDto){
-        return this.usersService.create(CreateUserDto);
+    async create(@Body() createUserDto: CreateUserDto){
+        console.log('hi')
+        if( await this.usersService.doesUserExist(createUserDto)){
+            return "Email is already in use."
+        }
+        return this.usersService.create(createUserDto);
 
     }
 
-    @Patch(':id')
-    update(@Param('id') id: string, @Body() UpdateUserDto){
-        return this.usersService.update(id, UpdateUserDto);
-
-    }
-
+    //Delete will remove the account with the id entered. If the id is not being used,
+    //it will return an error. 
     @Delete(':id')
-    remove(@Param('id') id: string) {
+    async remove(@Param('id') id: string) {
         return this.usersService.remove(id);
     }
 

@@ -8,10 +8,10 @@ import { Test, TestingModule } from '@nestjs/testing';
 @Injectable()
 export class UsersService {
   async create(createUserDto: CreateUserDto) {
-    // const user = User.create(createUserDto);
-    // await user.save();
-    // delete user.password;
-    // return user;
+    const user = User.create(createUserDto);
+    await user.save();
+    delete user.password; 
+    return user;
   }
 }
 
