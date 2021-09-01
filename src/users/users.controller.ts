@@ -15,7 +15,7 @@ export class UsersController {
     @Get()
     findAll(@Query() any ) {
         const users = this.usersService.findAll();
-        return users;//this.usersService.findAll();
+        return users;
     }
 
     //Get with the "id" parameter finds the account matching that id and returns it.
@@ -30,7 +30,6 @@ export class UsersController {
     //it will return an error. If not, it will create the account.  
     @Post()
     async create(@Body() createUserDto: CreateUserDto){
-        console.log('hi')
         if( await this.usersService.doesUserExist(createUserDto)){
             return "Email is already in use."
         }
