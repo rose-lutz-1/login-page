@@ -1,6 +1,15 @@
 version: '3.8'
 
 services:
+    mysql:
+        image: mysql
+        command: --default-authentication-plugin=mysql_native_password
+        restart: unless-stopped
+        networks:
+            - nesjs-network
+        environment:
+            MYSQL_ROOT_PASSWORD: geronim0
+            MYSQL_DATABASE: interview_app
     api:
         container_name: nestjs_api
         image: nestjs-api-dev:1.0.0
@@ -8,22 +17,17 @@ services:
             context: .
             dockerfile: ./Dockerfile
         command: npm run start:debug
+        networks:
+            - nesjs-network
         ports:
             - 3000:3000
             - 3306:3306
-        networks:
-            - nesjs-network
         volumes:
             - .:/usr/src/login
             - /usr/src/login/node_modules
         restart: unless-stopped
-
-    mysql:
-        image: mysql
-        command: --default-authentication-plugin=mysql_native_password
-        restart: unless stopped
-        environment:
-            MYSQL_ROOT_PASSWORD: geronim0
+        env_file: 
+            - .env
 
 
 networks:
