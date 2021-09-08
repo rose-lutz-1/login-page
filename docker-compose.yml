@@ -1,12 +1,11 @@
 version: '3.8'
 
 services:
-    dev:
-        container_name: nestjs_api_dev
+    api:
+        container_name: nestjs_api
         image: nestjs-api-dev:1.0.0
         build:
             context: .
-            target: development
             dockerfile: ./Dockerfile
         command: npm run start:debug
         ports:
@@ -18,23 +17,14 @@ services:
             - .:/usr/src/login
             - /usr/src/login/node_modules
         restart: unless-stopped
-    prod:
-        container_name: nestjs_api_prod
-        image: nestjs-api-prod:1.0.0
-        build:
-            context: .
-            target: production
-            dockerfile: ./Dockerfile
-        command: npm run start:prod
-        ports:
-            - 3000:3000
-            - 3306:3306
-        networks:
-            - nesjs-network
-        volumes:
-            - .:/usr/src/login
-            - /usr/src/login/node_modules
-        restart: unless-stopped
+
+    mysql:
+        image: mysql
+        command: --default-authentication-plugin=mysql_native_password
+        restart: unless stopped
+        environment:
+            MYSQL_ROOT_PASSWORD: geronim0
+
 
 networks:
     nesjs-network:
